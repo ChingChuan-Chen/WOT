@@ -5,16 +5,16 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ## 架構圖
 
-![](images/架構圖.PNG)
+![](images/架構圖.svg)
 
 ## 系統需求
 
-###  Web Services
-###  Web View
-###  自動部署
-###  監控
-###  主動即時的Alarm系統
-###  Admin頁面
-###  重要元件HA機制
+1.  Web Services
+2.  Web View
+3.  Admin頁面
+4.  監控
+5.  主動即時的Alarm系統
+6.  重要元件HA機制
+7.  自動部署
 
 
