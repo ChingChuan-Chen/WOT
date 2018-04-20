@@ -9,10 +9,10 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ## 系統需求 (許願中)
 
-1.  Web Services
+###  Web Services
   a. 待定
 
-2.  Web View
+###  Web View
   - [ ] 支援LDAP登入，並以username控制可以查詢的DB (如目前的JASDA)
   - SQL編輯器，支援function, table, column提示
      - [ ] syntax highlight
@@ -47,23 +47,23 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
       - [ ] view
       - [ ] edit
 
-3.  Admin頁面
+###  Admin頁面
   - [ ] 可以設定group, connection部分
   - [ ] Web View權限管理 (卡user view/edit權限)
   - [ ] 查詢locked table
   - [ ] 砍特定session (for long run, table lock等)
 
-4.  系統服務監控
+###  系統服務監控
   - [ ] 暫定搭配zabbix，定時確認service存活狀態，然後寄信並自動重啟，設定可export，也可一次性部署到到各台
 
-5.  主動即時的Alarm系統
+###  主動即時的Alarm系統
   - [ ] 暫定用grafana，可以拉KPI圖表並設定alarm mail，其設定可以export跟import
 
-6.  元件HA機制
+###  元件HA機制
   - [ ] middleware採group方式搭配nginx and GDNS
   - [ ] 使用web server多台搭配nginx for 2. and 3.
   - [ ] prograsql with high availability for server logging, service logging, connection setting and group setting
 
-7.  自動部署
+###  自動部署
   - [ ] 使用shell撰寫，自動安裝並啟動服務 for 1, 2, 3
   - [ ] 自動部署6-c，並initialize tables
