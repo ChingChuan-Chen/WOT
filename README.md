@@ -21,6 +21,7 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
      - [ ] function提示
      - [ ] table提示
      - [ ] column提示
+     - [ ] 查詢execusion plan
   - procedure, function編輯器，並支援儲存
      - [ ] view procedure/function
      - [ ] edit procedure/function
@@ -46,6 +47,9 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
     - table privilege
       - [ ] view
       - [ ] edit
+    - partition info
+      - [ ] view
+      - [ ] edit
 
 ###  Admin頁面
   - [ ] 可以設定group, connection部分
@@ -58,6 +62,7 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ###  主動即時的Alarm系統
   - [ ] 暫定用grafana，可以拉KPI圖表並設定alarm mail，其設定可以export跟import
+  - [ ] 自動砍table lock (可以在Admin頁面設定時間)
 
 ###  元件HA機制
   - [ ] middleware採group方式搭配nginx and GDNS
