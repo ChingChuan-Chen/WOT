@@ -67,8 +67,16 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 ###  元件HA機制
   - [ ] middleware採group方式搭配nginx and GDNS
   - [ ] 使用web server多台搭配nginx for 2. and 3.
-  - [ ] prograsql with high availability for server logging, service logging, connection setting and group setting
+  - Database with high availability for server logging, service logging, connection setting and group setting
+    - [ ] solution survey
+    - [ ] build-up
 
 ###  自動部署
   - [ ] 使用shell撰寫，自動安裝並啟動服務 for 1, 2, 3
   - [ ] 自動部署6-c，並initialize tables
+
+
+## References
+  1. Database with HA
+    1. [ProxySQL安裝配置](https://dwj999.github.io/ProxySQL-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E3%80%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.html)
+    1. [Consul, ProxySQL, and MySQL HA](https://dzone.com/articles/consul-proxysql-and-mysql-ha?utm_medium=feed&utm_source=feedpress.me&utm_campaign=Feed:%20dzone)
