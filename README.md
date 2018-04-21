@@ -75,6 +75,9 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
   - [ ] 使用shell撰寫，自動安裝並啟動服務 for 1, 2, 3
   - [ ] 自動部署6-c，並initialize tables
 
+### 測試Oracle部署
+  - [X] 安裝: [My Blogger](http://chingchuan-chen.github.io/posts/201607/2016-07-24-deployment-of-oracle-database.html)
+  - [ ] 倒入測試資料 [IMDb Datasets](https://www.imdb.com/interfaces/)
 
 ## References
   1. Database with HA

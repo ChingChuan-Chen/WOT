@@ -10,9 +10,6 @@ port <- 1539
 sid <- "orcl"
 connectString <- sprintf("(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=%s)(PORT=%i))(CONNECT_DATA=(SID=%s)))",
                          host, port, sid)
-
-
-
 oraConn <- dbConnect(dbDriver("Oracle"), username = "webdbtool",
                      password = "f15cim2w3e4r", dbname = connectString)
 dbListTables(oraConn)
