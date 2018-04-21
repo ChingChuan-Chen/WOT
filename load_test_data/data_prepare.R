@@ -19,7 +19,7 @@ for (i in seq_along(dataUrls)) {
 }
 
 ##### decompress data #####
-list.files("tsv_gz_data/", full.names = TRUE, pattern = "\\.gz$") %>>%
+list.files("tsv_gz_data/", "\\.gz$", full.names = TRUE) %>>%
   sapply(function(gzfn){
     destname <- substring(gzfn, 1L, nchar(gzfn) - 3)
     if (!file.exists(destname))

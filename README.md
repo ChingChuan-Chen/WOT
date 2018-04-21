@@ -38,6 +38,8 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
       - [ ] view
       - [ ] edit
     - key info (see [PRIMARY KEY](https://www.w3schools.com/sql/sql_primarykey.asp), [FOREIGN KEY](https://www.w3schools.com/sql/sql_foreignkey.asp))
+      - [ ] view
+      - [ ] edit
     - index info
       - [ ] view
       - [ ] edit
@@ -58,17 +60,18 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
   - [ ] 砍特定session (for long run, table lock等)
 
 ###  系統服務監控
-  - [ ] 暫定搭配zabbix，定時確認service存活狀態，然後寄信並自動重啟，設定可export，也可一次性部署到到各台
+  - [ ] Use Grafana, InfluxDB and Telegraf to monitoring server and web app
 
 ###  主動即時的Alarm系統
-  - [ ] 暫定用grafana，可以拉KPI圖表並設定alarm mail，其設定可以export跟import
+  - [ ] Use Grafana alerting
   - [ ] 自動砍table lock (可以在Admin頁面設定時間)
 
 ###  元件HA機制
-  - [ ] middleware採group方式搭配nginx and GDNS
-  - [ ] 使用web server多台搭配nginx for 2. and 3.
-  - Database with high availability for server logging, service logging, connection setting and group setting
-    - [ ] solution survey
+  - [ ] Middleware Group
+  - [ ] web server
+  - [ ] Configuration of connection setting and group setting in Oracle
+  - Database with high availability for server monitoring, service monitoring and logging
+    - [X] solution survey - Grafana + InfluxDB + Telegraf
     - [ ] build-up
 
 ###  自動部署
@@ -80,6 +83,31 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
   - [ ] 倒入測試資料 [IMDb Datasets](https://www.imdb.com/interfaces/)
 
 ## References
-  1. Database with HA
-    1. [ProxySQL安裝配置](https://dwj999.github.io/ProxySQL-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E3%80%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.html)
-    1. [Consul, ProxySQL, and MySQL HA](https://dzone.com/articles/consul-proxysql-and-mysql-ha?utm_medium=feed&utm_source=feedpress.me&utm_campaign=Feed:%20dzone)
+  1. Monitoring System
+    1. [Grafana + InfluxDB + Telegraf](https://runnerlee.com/2017/08/18/influxdb-telegraf-grafana-monitor)
+    1. [Grafana + InfluxDB + Telegraf](https://github.com/anryko/grafana-influx-dashboard)
+    1. [ProxySQL Monitoring Solution](http://seanlook.com/2017/07/16/mysql-proxysql-monitor/)
+    1. [MySQL Monitoring Solution](https://hackernoon.com/mysql-monitoring-with-telegraf-influxdb-grafana-4489e6df0220)
+    1. [InfluxDB + Python monitor Web App](https://stackoverflow.com/questions/37909251/send-python-web-app-metrics-to-influxdb)
+    1. [influxdb-relay for InfluxDB HA](https://github.com/influxdata/influxdb-relay)
+  2. HA solution for Web Service and Web App
+    1. [使用nginx+keepalived實現RESTful API的負載平衡和高可用性](https://ieevee.com/tech/2015/07/02/nginx-keepalived.html)
+    1. [nginx + keepalived實現website高可用性](https://segmentfault.com/a/1190000002881132)
+  3. Middleware for keeping alive
+    1. [Use nginx to pass hostname of the upstream](https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying)
+    1. [nginx: keep alive](https://skyao.gitbooks.io/learning-nginx/content/documentation/keep_alive.html)
+
+## Production環境架構
+  1. Oracle cluster: 數台
+  1. InfluxDB: 2 servers
+  1. Grafana: at least 2 servers
+  1. middleware: at least 3 servers per group
+  1. web view server: at least 3 servers
+  1. admin web server: at least 3 servers
+
+## Test Server配置 (9 servers)：
+  1. testing Oracle: 1 servers
+  1. InfluxDB: 2 servers
+  1. keepalived + nginx + middleware: 3 servers
+  1. keepalived + nginx + web view server: 3 servers
+  1. keepalived + nginx + admin web server/Grafana: 2 servers (co-exist on web view server)
