@@ -10,7 +10,17 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 ## 系統需求 (許願中)
 
 ###  Web Services
-  a. 待定
+  a. POST service for SQL querying data
+    - [ ] input: sql / app info / flag whether fetch all
+    - output:
+       - [ ] flag not to fetch all: A request with setting cookie (session-id), remote address and remote port
+       - [ ] flag to fetch all: sql data, data types
+  b. POST service for SQL querying data
+    - [ ] input: session-id, fetch size (max: 10,000)
+    - [ ] output: sql data, data types
+  c. POST service for transaction SQL
+    - [ ] input: sql / app info
+    - [ ] output: successful or not
 
 ###  Web View
   - [ ] 支援LDAP登入，並以username控制可以查詢的DB (如目前的JASDA)
@@ -18,16 +28,18 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
      - [ ] syntax highlight
      - [ ] theme selection (bright or dark)
      - [ ] 右鍵view table, query data, edit data
-     - [ ] function提示
-     - [ ] table提示
-     - [ ] column提示
+     - [ ] function auto-complete
+     - [ ] table auto-complete
+     - [ ] column auto-complete
      - [ ] 查詢execusion plan
+     - [ ] auto formatter
+     - [ ] windows list of sql editor
+     - [ ] save sql scripts
   - procedure, function編輯器，並支援儲存
      - [ ] view procedure/function
      - [ ] edit procedure/function
   - select SQL查詢，並顯示資料於grid
      - [ ] view
-     - [ ] lock (see [lock sql](https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/lock-tables.html))
      - [ ] perform insert / update on grid
   - [ ] 執行transaction SQL，並提供commit按鈕
   - [ ] 執行procedure
@@ -75,8 +87,7 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
     - [ ] build-up
 
 ###  自動部署
-  - [ ] 使用shell撰寫，自動安裝並啟動服務 for 1, 2, 3
-  - [ ] 自動部署6-c，並initialize tables
+  - [ ] 使用shell撰寫，自動安裝並啟動服務 for 前三項
 
 ### 測試Oracle部署
   - [X] 安裝: [My Blogger](http://chingchuan-chen.github.io/posts/201607/2016-07-24-deployment-of-oracle-database.html)
