@@ -9,12 +9,12 @@ def getQuery(oracleConn):
     return orclUserNames
 
 if __name__== "__main__":
-    dsn_tns = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=jamalvm01.ddns.net)(PORT=1539))(CONNECT_DATA=(SID=orcl)))'
+    dsn_tns = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=jamalvm01.ddns.net)(PORT=15039))(CONNECT_DATA=(SID=orcl)))'
     test_local = True
     oracleConn = cx_Oracle.connect('webdbtool', 'f15cim2w3e4r', dsn_tns)
     print(getQuery(oracleConn))
 
     if test_local:
-        dsn_tns = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=jamalvm01.ddns.net)(PORT=1539))(CONNECT_DATA=(SID=orcl)))'
+        dsn_tns = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.113)(PORT=1539))(CONNECT_DATA=(SID=orcl)))'
         oracleConn = cx_Oracle.connect('webdbtool', 'f15cim2w3e4r', dsn_tns)
         print(getQuery(oracleConn))
