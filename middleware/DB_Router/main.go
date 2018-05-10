@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	//"github.com/apex/gateway"
-	"github.com/weizhe0422/WOT_v2/connect"
+	"github.com/weizhe0422/WOT/middleware/DB_Router/connect"
 )
 
 func listObjects(t *testing.T, querySQL string) []string {
@@ -23,6 +23,12 @@ func listObjects(t *testing.T, querySQL string) []string {
 		return nil
 	}
 	defer conn.Close()
+
+	columns, err := GetColumns(db, qry)
+	if err != nil {
+		return errgo.Notef(err, "get column converters", err)
+	}
+	log.Printf("columns: %#v", columns)
 
 	//"SELECT USERNAME FROM all_users"
 	//"SELECT owner, object_name, object_id FROM all_objects WHERE ROWNUM < 20"

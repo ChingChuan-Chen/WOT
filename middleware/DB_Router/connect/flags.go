@@ -21,6 +21,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"gopkg.in/rana/ora.v4"
 
@@ -142,6 +143,48 @@ func SplitDSN(dsn string) (username, password, sid string) {
 		username, password = dsn[:i], dsn[i+1:]
 	}
 	return
+}
+
+func defaultConverter(data interface{}) string { return fmt.Sprintf("%v", data) }
+
+type ColConverter func(interface{}) string
+
+type ColumnDesc struct {
+	Name   string
+	String ColConverter
+}
+
+var converters = map[int]ColConverter{
+	1: func(data interface{}) string { //VARCHAR2
+		return fmt.Sprintf("%q", data.(string))
+	},
+	6: func(data interface{}) string { //NUMBER
+		return fmt.Sprintf("%v", data)
+	},
+	96: func(data interface{}) string { //CHAR
+		return fmt.Sprintf("%q", data.(string))
+	},
+	156: func(data interface{}) string { //DATE
+		return `"` + data.(time.Time).Format(time.RFC3339) + `"`
+	},
+}
+
+func GetColumns(db *sql.DB, qry string) (cols []ColumnDesc, err error) {
+	desc, err := DescribeQuery(db, qry)
+	if err != nil {
+		return nil, fmt.Errorf("error getting description for %q: %s", qry, err)
+	}
+	log.Printf("desc: %#v", desc)
+	var ok bool
+	cols = make([]ColumnDesc, len(desc))
+	for i, col := range desc {
+		cols[i].Name = col.Name
+		if cols[i].String, ok = converters[col.Type]; !ok {
+			cols[i].String = defaultConverter
+			log.Printf("no converter for type %d (column name: %s)", col.Type, col.Name)
+		}
+	}
+	return cols, nil
 }
 
 type Column struct {
