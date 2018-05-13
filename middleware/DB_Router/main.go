@@ -24,9 +24,10 @@ func listObjects(t *testing.T, querySQL string) []string {
 	}
 	defer conn.Close()
 
-	columns, err := GetColumns(db, qry)
+	columns, err := connect.GetColumns(conn, querySQL)
+
 	if err != nil {
-		return errgo.Notef(err, "get column converters", err)
+		//return fmt.Sprint("get column converters")
 	}
 	log.Printf("columns: %#v", columns)
 
