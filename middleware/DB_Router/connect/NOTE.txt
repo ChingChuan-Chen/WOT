@@ -1,0 +1,21 @@
+https://community.toadworld.com/platforms/oracle/w/wiki/3328.dbms-sql-describe-columns
+Datatype	Number
+VARCHAR2	1
+NVARCHAR2	1
+NUMBER	2
+INTEGER	2
+LONG	8
+ROWID	11
+DATE	12
+RAW	23
+LONG RAW	24
+CHAR	96
+NCHAR	96
+MLSLABEL	106
+CLOB (Oracle8)	112
+NCLOB (Oracle8)	112
+BLOB (Oracle8)	113
+BFILE (Oracle8)	114
+Object type (Oracle8)	121
+Nested table Type (Oracle8)	122
+Variable array (Oracle8)	123

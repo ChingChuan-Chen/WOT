@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 	"sync"
-	"time"
+	//"time"
 
 	"gopkg.in/rana/ora.v4"
 
@@ -151,22 +151,15 @@ type ColConverter func(interface{}) string
 
 type ColumnDesc struct {
 	Name   string
-	String ColConverter
+	String string
 }
 
-var converters = map[int]ColConverter{
-	1: func(data interface{}) string { //VARCHAR2
-		return fmt.Sprintf("%q", data.(string))
-	},
-	6: func(data interface{}) string { //NUMBER
-		return fmt.Sprintf("%v", data)
-	},
-	96: func(data interface{}) string { //CHAR
-		return fmt.Sprintf("%q", data.(string))
-	},
-	156: func(data interface{}) string { //DATE
-		return `"` + data.(time.Time).Format(time.RFC3339) + `"`
-	},
+var converters = map[int]string{
+	1:  "VARCHAR2",
+	2:  "NUMBER",
+	8:  "LONG",
+	11: "ROWID",
+	12: "DATE",
 }
 
 func GetColumns(db *sql.DB, qry string) (cols []ColumnDesc, err error) {
@@ -180,7 +173,7 @@ func GetColumns(db *sql.DB, qry string) (cols []ColumnDesc, err error) {
 	for i, col := range desc {
 		cols[i].Name = col.Name
 		if cols[i].String, ok = converters[col.Type]; !ok {
-			cols[i].String = defaultConverter
+			cols[i].String = "UNKNOWN"
 			log.Printf("no converter for type %d (column name: %s)", col.Type, col.Name)
 		}
 	}
