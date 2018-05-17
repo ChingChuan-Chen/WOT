@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	//"time"
@@ -35,9 +36,9 @@ var (
 	fDsn      = flag.String("db.dsn", "", "Oracle DSN (user/passw@sid)")
 	fUsername = flag.String("db.username", "", "username to connect as (if you don't provide the dsn")
 	fPassword = flag.String("db.password", "", "password to connect with (if you don't provide the dsn")
-	//fHost        = flag.String("db.host", "", "Oracle DB's host (if you don't provide the dsn")
-	//fPort        = flag.Int("db.port", 1521, "Oracle DB's port (if you don't provide the dsn) - defaults to 1521")
-	fSid = flag.String("db.sid", "", "Oracle DB's SID (if you don't provide the dsn)")
+	fHost     = flag.String("db.host", "", "Oracle DB's host (if you don't provide the dsn")
+	fPort     = flag.Int("db.port", 1521, "Oracle DB's port (if you don't provide the dsn) - defaults to 1521")
+	fSid      = flag.String("db.sid", "", "Oracle DB's SID (if you don't provide the dsn)")
 	//fServiceName = flag.String("db.service", "", "Oracle DB's ServiceName (if you don't provide the dsn and the sid)")
 )
 
@@ -80,9 +81,12 @@ func GetDSN(srvCfg ora.SrvCfg, sesCfg ora.SesCfg) string {
 	if srvCfg.Dblink == "" && sesCfg.Username == "" {
 		srvCfg, sesCfg = GetCfg("")
 	}
-	sesCfg.Username = "webdbtool"
+	/*sesCfg.Username = "webdbtool"
 	sesCfg.Password = "f15cim2w3e4r"
-	srvCfg.Dblink = "jamalvm01.ddns.net:15039/orcl.jamal.org"
+	srvCfg.Dblink = "jamalvm01.ddns.net:15039/orcl.jamal.org"*/
+	sesCfg.Username = *fUsername
+	sesCfg.Password = *fPassword
+	srvCfg.Dblink = *fHost + ":" + strconv.Itoa(*fPort) + "/" + *fSid
 	return sesCfg.Username + "/" + sesCfg.Password + "@" + srvCfg.Dblink
 }
 
@@ -162,22 +166,23 @@ var converters = map[int]string{
 	12: "DATE",
 }
 
-func GetColumns(db *sql.DB, qry string) (cols []ColumnDesc, err error) {
+func GetColumns(db *sql.DB, qry string) (cols []Column, err error) {
 	desc, err := DescribeQuery(db, qry)
 	if err != nil {
 		return nil, fmt.Errorf("error getting description for %q: %s", qry, err)
 	}
 	log.Printf("desc: %#v", desc)
 	var ok bool
-	cols = make([]ColumnDesc, len(desc))
+	cols = make([]Column, len(desc))
 	for i, col := range desc {
 		cols[i].Name = col.Name
-		if cols[i].String, ok = converters[col.Type]; !ok {
-			cols[i].String = "UNKNOWN"
+		cols[i].Length = col.Length
+		if cols[i].TypeDesc, ok = converters[col.Type]; !ok {
+			cols[i].TypeDesc = "UNKNOWN"
 			log.Printf("no converter for type %d (column name: %s)", col.Type, col.Name)
 		}
 	}
-	return cols, nil
+	return desc, nil
 }
 
 type Column struct {
@@ -185,6 +190,7 @@ type Column struct {
 	Type, Length, Precision, Scale int
 	Nullable                       bool
 	CharsetID, CharsetForm         int
+	TypeDesc                       string
 }
 
 // DescribeQuery describes the columns in the qry string,

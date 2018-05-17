@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -15,25 +16,17 @@ import (
 	"github.com/weizhe0422/WOT/middleware/DB_Router/connect"
 )
 
-func listObjects(t *testing.T, querySQL string) []string {
-	conn, err := connect.GetConnection("")
-	if err != nil {
-		t.Errorf("error connectiong: %s", err)
-		t.FailNow()
-		return nil
-	}
-	defer conn.Close()
-
+func listObjects(t *testing.T, querySQL string, conn *sql.DB) []string {
 	log.Println("column info: ")
 	columns, err := connect.GetColumns(conn, querySQL)
 	for _, col := range columns {
-		log.Println("Name: ", col.Name, "info:", col.String)
+		log.Println("Name: ", col.Name, "info:", col.TypeDesc, "Length", col.Length)
 	}
 
 	if err != nil {
 		//return fmt.Sprint("get column converters")
 	}
-	log.Printf("columns: %#v", columns)
+	//log.Printf("columns: %#v", columns)
 
 	//"SELECT USERNAME FROM all_users"
 	//"SELECT owner, object_name, object_id FROM all_objects WHERE ROWNUM < 20"
@@ -70,6 +63,13 @@ func main() {
 	c := make(chan os.Signal)
 	var wg sync.WaitGroup
 
+	conn, err := connect.GetConnection("")
+	if err != nil {
+		t.Errorf("error connectiong: %s", err)
+		t.FailNow()
+	}
+	defer conn.Close()
+
 	router := gin.Default()
 	router.GET("hello/:usr", func(CTxt *gin.Context) {
 		name := CTxt.Param("usr")
@@ -87,7 +87,7 @@ func main() {
 			log.Println("querySQL:", querySQL)
 
 			CTxt.JSON(200, gin.H{
-				"usrname": listObjects(t, querySQL),
+				"usrname": listObjects(t, querySQL, conn),
 			})
 			wg.Done()
 		}()

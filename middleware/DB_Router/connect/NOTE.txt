@@ -1,3 +1,7 @@
+1. Launch command line
+go run main.go -db.username webdbtool -db.password f15cim2w3e4r -db.host jamalvm01.ddns.net -db.port 15039 -db.sid orcl.jamal.org
+
+2. Oracle Column Type mapping table
 https://community.toadworld.com/platforms/oracle/w/wiki/3328.dbms-sql-describe-columns
 Datatype	Number
 VARCHAR2	1
