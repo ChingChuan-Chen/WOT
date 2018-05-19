@@ -11,9 +11,9 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ###  Web Services
   a. POST service for SQL querying data
-    - [ ] input: sql / app info / flag whether fetch all
+    - [ ] input: sql / app info / config (includes row/column-based json, fetch size, cookie)
     - output:
-       - [ ] flag not to fetch all: A request with setting cookie (session-id), remote address and remote port
+       - [ ] flag not to fetch all: A request with cookie, remote address and remote port
        - [ ] flag to fetch all: sql data, data types
   b. POST service for SQL querying data
     - [ ] input: session-id, fetch size (max: 10,000)
@@ -91,22 +91,29 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ### 測試Oracle部署
   - [X] 安裝: [My Blogger](http://chingchuan-chen.github.io/posts/201607/2016-07-24-deployment-of-oracle-database.html)
-  - [ ] 倒入測試資料 [IMDb Datasets](https://www.imdb.com/interfaces/)
+  - [ ] 倒入測試資料 [Yelp Open Datasets](https://www.yelp.com/dataset)，測試資料長相如下圖
+![](https://s3-media3.fl.yelpcdn.com/assets/srv0/engineering_pages/f4456a01e74a/assets/img/dataset/yelp_dataset_schema.png)
 
 ## References
   1. Monitoring System
-    1. [Grafana + InfluxDB + Telegraf](https://runnerlee.com/2017/08/18/influxdb-telegraf-grafana-monitor)
-    1. [Grafana + InfluxDB + Telegraf](https://github.com/anryko/grafana-influx-dashboard)
-    1. [ProxySQL Monitoring Solution](http://seanlook.com/2017/07/16/mysql-proxysql-monitor/)
-    1. [MySQL Monitoring Solution](https://hackernoon.com/mysql-monitoring-with-telegraf-influxdb-grafana-4489e6df0220)
-    1. [InfluxDB + Python monitor Web App](https://stackoverflow.com/questions/37909251/send-python-web-app-metrics-to-influxdb)
-    1. [influxdb-relay for InfluxDB HA](https://github.com/influxdata/influxdb-relay)
+    - 1. [Grafana + InfluxDB + Telegraf](https://runnerlee.com/2017/08/18/influxdb-telegraf-grafana-monitor)
+    - 1. [Grafana + InfluxDB + Telegraf](https://github.com/anryko/grafana-influx-dashboard)
+    - 1. [ProxySQL Monitoring Solution](http://seanlook.com/2017/07/16/mysql-proxysql-monitor/)
+    - 1. [MySQL Monitoring Solution](https://hackernoon.com/mysql-monitoring-with-telegraf-influxdb-grafana-4489e6df0220)
+    - 1. [InfluxDB + Python monitor Web App](https://stackoverflow.com/questions/37909251/send-python-web-app-metrics-to-influxdb)
+    - 1. [influxdb-relay for InfluxDB HA](https://github.com/influxdata/influxdb-relay)
+    - 1. [influxdb-relay](https://www.xusheng.org/blog/2016/08/12/influxdb-relay-performance-bottle-neck-analysing/)
   2. HA solution for Web Service and Web App
-    1. [使用nginx+keepalived實現RESTful API的負載平衡和高可用性](https://ieevee.com/tech/2015/07/02/nginx-keepalived.html)
-    1. [nginx + keepalived實現website高可用性](https://segmentfault.com/a/1190000002881132)
+    - 1. [使用nginx+keepalived實現RESTful API的負載平衡和高可用性](https://ieevee.com/tech/2015/07/02/nginx-keepalived.html)
+    - 1. [nginx + keepalived實現website高可用性](https://segmentfault.com/a/1190000002881132)
   3. Middleware for keeping alive
-    1. [Use nginx to pass hostname of the upstream](https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying)
-    1. [nginx: keep alive](https://skyao.gitbooks.io/learning-nginx/content/documentation/keep_alive.html)
+    - 1. [Use nginx to pass hostname of the upstream](https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying)
+    - 1. [nginx: keep alive](https://skyao.gitbooks.io/learning-nginx/content/documentation/keep_alive.html)
+  4. Kubernetes
+    - 1. [Kubeadm - fast build k8s](https://github.com/kubernetes/kubeadm)
+    - 1. [Kubeadm-HA - fast build k8s HA cluster](https://github.com/cookeem/kubeadm-ha)
+    - 1. [手動搭建 Kubernetes HA Cluster](https://mritd.me/2017/07/21/set-up-kubernetes-ha-cluster-by-binary/)
+    - 1. [K8S部署應用實例](https://segmentfault.com/a/1190000004861499)
 
 ## Production環境架構
   1. Oracle cluster: 數台
