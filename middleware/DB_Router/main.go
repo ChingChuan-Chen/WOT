@@ -16,11 +16,26 @@ import (
 	"github.com/weizhe0422/WOT/middleware/DB_Router/connect"
 )
 
-func listObjects(t *testing.T, querySQL string, conn *sql.DB) []string {
+var converters = map[int]string{
+	1:  "VARCHAR2",
+	2:  "NUMBER",
+	8:  "LONG",
+	11: "ROWID",
+	12: "DATE",
+}
+
+func listObjects(t *testing.T, querySQL string, conn *sql.DB) ([]string, []string) {
+	var (
+		userName   string
+		rowResults []string
+		colResults []string
+	)
+
 	log.Println("column info: ")
 	columns, err := connect.GetColumns(conn, querySQL)
 	for _, col := range columns {
-		log.Println("Name: ", col.Name, "info:", col.TypeDesc, "Length", col.Length)
+		log.Println("Name: ", col.Name, "info:", converters[col.Type], "Length", col.Length)
+		colResults = append(colResults, col.Name)
 	}
 
 	if err != nil {
@@ -38,13 +53,8 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) []string {
 	if err != nil {
 		t.Logf(`error with %q: %s`, qry, err)
 		t.FailNow()
-		return nil
+		return nil, nil
 	}
-
-	var (
-		userName string
-		results  []string
-	)
 
 	for rows.Next() {
 		if err = rows.Scan(&userName); err != nil {
@@ -52,9 +62,9 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) []string {
 			break
 		}
 		log.Println("rows: ", userName)
-		results = append(results, userName)
+		rowResults = append(rowResults, userName)
 	}
-	return results
+	return colResults, rowResults
 }
 
 func main() {
@@ -86,9 +96,21 @@ func main() {
 			//log.Printf("got signal %s", sig)
 			log.Println("querySQL:", querySQL)
 
-			CTxt.JSON(200, gin.H{
-				"usrname": listObjects(t, querySQL, conn),
-			})
+			mapResult := make(map[string][]string)
+			var (
+				colInfo  []string
+				dataInfo []string
+			)
+			colInfo, dataInfo = listObjects(t, querySQL, conn)
+
+			for _, colName := range colInfo {
+				mapResult[colName] = dataInfo
+			}
+			CTxt.JSON(200, mapResult)
+
+			/*CTxt.JSON(200, gin.H{
+				"usrname": ,
+			})*/
 			wg.Done()
 		}()
 		signal.Notify(c, syscall.SIGUSR1)

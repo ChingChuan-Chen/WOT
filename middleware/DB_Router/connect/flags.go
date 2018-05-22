@@ -158,29 +158,18 @@ type ColumnDesc struct {
 	String string
 }
 
-var converters = map[int]string{
-	1:  "VARCHAR2",
-	2:  "NUMBER",
-	8:  "LONG",
-	11: "ROWID",
-	12: "DATE",
-}
-
 func GetColumns(db *sql.DB, qry string) (cols []Column, err error) {
 	desc, err := DescribeQuery(db, qry)
 	if err != nil {
 		return nil, fmt.Errorf("error getting description for %q: %s", qry, err)
 	}
 	log.Printf("desc: %#v", desc)
-	var ok bool
+
 	cols = make([]Column, len(desc))
 	for i, col := range desc {
 		cols[i].Name = col.Name
 		cols[i].Length = col.Length
-		if cols[i].TypeDesc, ok = converters[col.Type]; !ok {
-			cols[i].TypeDesc = "UNKNOWN"
-			log.Printf("no converter for type %d (column name: %s)", col.Type, col.Name)
-		}
+		cols[i].Type = col.Type
 	}
 	return desc, nil
 }
