@@ -24,20 +24,20 @@ var converters = map[int]string{
 	12: "DATE",
 }
 
-func listObjects(t *testing.T, querySQL string, conn *sql.DB) map[string][]string {
+func listObjects(t *testing.T, querySQL string, conn *sql.DB) []map[string]interface{} {
 	log.Println("column info: ")
+
 	columns, err := connect.GetColumns(conn, querySQL)
+	if err != nil {
+		return nil
+	}
+
 	for _, col := range columns {
 		log.Println("Name: ", col.Name, "info:", converters[col.Type], "Length", col.Length)
 	}
 
-	if err != nil {
-		//return fmt.Sprint("get column converters")
-	}
 	//log.Printf("columns: %#v", columns)
 
-	//"SELECT USERNAME FROM all_users"
-	//"SELECT owner, object_name, object_id FROM all_objects WHERE ROWNUM < 20"
 	qry := querySQL
 
 	log.Printf(`executing "%s"`, qry)
@@ -48,33 +48,25 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) map[string][]strin
 		t.FailNow()
 		return nil
 	}
+	scanFrom := make([]interface{}, len(columns))
+	scanTo := make([]interface{}, len(columns))
+	for i, _ := range scanFrom {
+		scanFrom[i] = &scanTo[i]
+	}
 
-	var (
-		firstCol  string
-		secondCol string
-	)
-
-	dataGet := make(map[int][]string)
+	returnMap := make(map[string]interface{})
+	assocArray := make([]map[string]interface{}, 0)
 	for rows.Next() {
-
-		if err = rows.Scan(&firstCol, &secondCol); err != nil {
+		if err = rows.Scan(scanFrom...); err != nil {
 			t.Errorf("error fetching: %s", err)
 			break
 		}
-
-		dataGet[0] = append(dataGet[0], firstCol)
-		dataGet[1] = append(dataGet[1], secondCol)
-
-		log.Println("rows: ", firstCol, secondCol)
+		for i, _ := range scanTo {
+			returnMap[columns[i].Name] = scanTo[i]
+		}
+		assocArray = append(assocArray, returnMap)
 	}
-
-	returnMap := make(map[string][]string)
-	for idx, col := range columns {
-		log.Println("Name: ", col.Name, "info:", converters[col.Type], "Length", col.Length)
-
-		returnMap[col.Name] = dataGet[idx]
-	}
-	return returnMap
+	return assocArray
 }
 
 func main() {
@@ -106,16 +98,16 @@ func main() {
 			//log.Printf("got signal %s", sig)
 			log.Println("querySQL:", querySQL)
 
-			//mapResult := make(map[string][]string)
 			var (
-				msgMap map[string][]string
+				msgMap []map[string]interface{}
 			)
 			msgMap = listObjects(t, querySQL, conn)
 
-			/*for index, colName := range colInfo {
-				mapResult[colName] = dataInfo[index]
-			}*/
-			CTxt.JSON(200, msgMap)
+			if msgMap == nil {
+				CTxt.JSON(http.StatusNoContent, nil)
+			} else {
+				CTxt.JSON(http.StatusOK, msgMap)
+			}
 
 			/*CTxt.JSON(200, gin.H{
 				"usrname": ,
