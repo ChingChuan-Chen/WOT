@@ -1,6 +1,8 @@
 Sys.setenv(TZ = "Asia/Taipei", ORA_SDTZ = "Asia/Taipei")
 library(ROracle)
 library(nycflights13)
+library(pipeR)
+library(data.table)
 
 getOraConn <- function(){
   host <- "192.168.1.113"
@@ -13,9 +15,9 @@ getOraConn <- function(){
 }
 
 oraConn <- getOraConn()
-dbWriteTable(oraConn, "AIRLINES", airlines)
-dbWriteTable(oraConn, "FLIGHTS", flights)
-dbWriteTable(oraConn, "PLANES", planes)
-dbWriteTable(oraConn, "AIRPORTS", airports)
-dbWriteTable(oraConn, "WEATHER", weather)
+dbWriteTable(oraConn, "AIRLINES", airlines %>>% setDT %>>% setnames(toupper(names(.))))
+dbWriteTable(oraConn, "FLIGHTS", flights %>>% setDT %>>% setnames(toupper(names(.))))
+dbWriteTable(oraConn, "PLANES", planes %>>% setDT %>>% setnames(toupper(names(.))))
+dbWriteTable(oraConn, "AIRPORTS", airports %>>% setDT %>>% setnames(toupper(names(.))))
+dbWriteTable(oraConn, "WEATHER", weather %>>% setDT %>>% setnames(toupper(names(.))))
 dbDisconnect(oraConn)
