@@ -24,18 +24,11 @@ var converters = map[int]string{
 	12: "DATE",
 }
 
-func listObjects(t *testing.T, querySQL string, conn *sql.DB) ([]string, []string) {
-	var (
-		userName   string
-		rowResults []string
-		colResults []string
-	)
-
+func listObjects(t *testing.T, querySQL string, conn *sql.DB) map[string][]string {
 	log.Println("column info: ")
 	columns, err := connect.GetColumns(conn, querySQL)
 	for _, col := range columns {
 		log.Println("Name: ", col.Name, "info:", converters[col.Type], "Length", col.Length)
-		colResults = append(colResults, col.Name)
 	}
 
 	if err != nil {
@@ -53,18 +46,35 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) ([]string, []strin
 	if err != nil {
 		t.Logf(`error with %q: %s`, qry, err)
 		t.FailNow()
-		return nil, nil
+		return nil
 	}
 
+	var (
+		firstCol  string
+		secondCol string
+	)
+
+	dataGet := make(map[int][]string)
 	for rows.Next() {
-		if err = rows.Scan(&userName); err != nil {
+
+		if err = rows.Scan(&firstCol, &secondCol); err != nil {
 			t.Errorf("error fetching: %s", err)
 			break
 		}
-		log.Println("rows: ", userName)
-		rowResults = append(rowResults, userName)
+
+		dataGet[0] = append(dataGet[0], firstCol)
+		dataGet[1] = append(dataGet[1], secondCol)
+
+		log.Println("rows: ", firstCol, secondCol)
 	}
-	return colResults, rowResults
+
+	returnMap := make(map[string][]string)
+	for idx, col := range columns {
+		log.Println("Name: ", col.Name, "info:", converters[col.Type], "Length", col.Length)
+
+		returnMap[col.Name] = dataGet[idx]
+	}
+	return returnMap
 }
 
 func main() {
@@ -96,17 +106,16 @@ func main() {
 			//log.Printf("got signal %s", sig)
 			log.Println("querySQL:", querySQL)
 
-			mapResult := make(map[string][]string)
+			//mapResult := make(map[string][]string)
 			var (
-				colInfo  []string
-				dataInfo []string
+				msgMap map[string][]string
 			)
-			colInfo, dataInfo = listObjects(t, querySQL, conn)
+			msgMap = listObjects(t, querySQL, conn)
 
-			for _, colName := range colInfo {
-				mapResult[colName] = dataInfo
-			}
-			CTxt.JSON(200, mapResult)
+			/*for index, colName := range colInfo {
+				mapResult[colName] = dataInfo[index]
+			}*/
+			CTxt.JSON(200, msgMap)
 
 			/*CTxt.JSON(200, gin.H{
 				"usrname": ,
