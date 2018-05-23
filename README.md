@@ -10,15 +10,15 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 ## 系統需求 (許願中)
 
 ###  Web Services
-  a. POST service for SQL querying data
+  - POST service for SQL querying data
     - [ ] input: sql / app info / config (includes row/column-based json, fetch size, cookie)
     - output:
        - [ ] flag not to fetch all: A request with cookie, remote address and remote port
        - [ ] flag to fetch all: sql data, data types
-  b. POST service for SQL querying data
+  - POST service for SQL querying data
     - [ ] input: session-id, fetch size (max: 10,000)
     - [ ] output: sql data, data types
-  c. POST service for transaction SQL
+  - POST service for transaction SQL
     - [ ] input: sql / app info
     - [ ] output: successful or not
 
