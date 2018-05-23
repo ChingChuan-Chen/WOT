@@ -50,18 +50,19 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) []map[string]inter
 	}
 	scanFrom := make([]interface{}, len(columns))
 	scanTo := make([]interface{}, len(columns))
-	for i, _ := range scanFrom {
+	for i := range scanFrom {
 		scanFrom[i] = &scanTo[i]
 	}
 
-	returnMap := make(map[string]interface{})
 	assocArray := make([]map[string]interface{}, 0)
 	for rows.Next() {
+		returnMap := make(map[string]interface{})
+
 		if err = rows.Scan(scanFrom...); err != nil {
 			t.Errorf("error fetching: %s", err)
 			break
 		}
-		for i, _ := range scanTo {
+		for i := range scanTo {
 			returnMap[columns[i].Name] = scanTo[i]
 		}
 		assocArray = append(assocArray, returnMap)
