@@ -14,6 +14,7 @@ package connect
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"flag"
 	"fmt"
@@ -22,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 	//"time"
 
 	"gopkg.in/rana/ora.v4"
@@ -91,16 +93,22 @@ func GetDSN(srvCfg ora.SrvCfg, sesCfg ora.SesCfg) string {
 }
 
 // GetConnection returns a connection - using GetDSN if dsn is empty
-func GetConnection(dsn string) (*sql.DB, error) {
+func GetConnection(dsn string) (*sql.DB, context.Context, error) {
 	if dsn == "" {
 		dsn = GetDSN(GetCfg(""))
 	}
 	log.Printf("GetConnection dsn=%v", dsn)
 	conn, err := sql.Open("ora", dsn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx = ora.WithStmtCfg(ctx, ora.Cfg().StmtCfg.SetPrefetchRowCount(10))
+
 	if err != nil {
-		return nil, errors.Wrap(err, "dsn="+dsn)
+		return nil, nil, errors.Wrap(err, "dsn="+dsn)
 	}
-	return conn, nil
+
+	defer cancel()
+	return conn, ctx, nil
 }
 
 var (

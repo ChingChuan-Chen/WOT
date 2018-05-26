@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"flag"
 	"github.com/gin-gonic/gin"
@@ -8,12 +9,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 	"testing"
-
+	"time"
 	//"github.com/apex/gateway"
 	"github.com/weizhe0422/WOT/middleware/DB_Router/connect"
+	"gopkg.in/rana/ora.v4"
 )
 
 var converters = map[int]string{
@@ -24,7 +27,7 @@ var converters = map[int]string{
 	12: "DATE",
 }
 
-func listObjects(t *testing.T, querySQL string, conn *sql.DB) []map[string]interface{} {
+func listObjects(t *testing.T, querySQL string, conn *sql.DB, ctx context.Context) []map[string]interface{} {
 	log.Println("column info: ")
 
 	columns, err := connect.GetColumns(conn, querySQL)
@@ -40,8 +43,7 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) []map[string]inter
 
 	qry := querySQL
 
-	log.Printf(`executing "%s"`, qry)
-	rows, err := conn.Query(qry)
+	rows, err := conn.QueryContext(ctx, qry)
 
 	if err != nil {
 		t.Logf(`error with %q: %s`, qry, err)
@@ -55,6 +57,8 @@ func listObjects(t *testing.T, querySQL string, conn *sql.DB) []map[string]inter
 	}
 
 	assocArray := make([]map[string]interface{}, 0)
+
+	defer rows.Close()
 	for rows.Next() {
 		returnMap := make(map[string]interface{})
 
@@ -76,7 +80,7 @@ func main() {
 	c := make(chan os.Signal)
 	var wg sync.WaitGroup
 
-	conn, err := connect.GetConnection("")
+	conn, _, err := connect.GetConnection("")
 	if err != nil {
 		t.Errorf("error connectiong: %s", err)
 		t.FailNow()
@@ -91,18 +95,24 @@ func main() {
 
 	router.POST("/query", func(CTxt *gin.Context) {
 		querySQL := CTxt.PostForm("querySql")
+		fetchSize, _ := strconv.Atoi(CTxt.PostForm("fetchSize"))
 
 		wg.Add(1)
 		go func() {
 			//log.Printf("waiting for signal...")
 			//sig := <-c
 			//log.Printf("got signal %s", sig)
+
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+			ctx = ora.WithStmtCfg(ctx, ora.Cfg().StmtCfg.SetPrefetchRowCount(uint32(fetchSize)))
+			defer cancel()
+
 			log.Println("querySQL:", querySQL)
 
 			var (
 				msgMap []map[string]interface{}
 			)
-			msgMap = listObjects(t, querySQL, conn)
+			msgMap = listObjects(t, querySQL, conn, ctx)
 
 			if msgMap == nil {
 				CTxt.JSON(http.StatusNoContent, nil)
