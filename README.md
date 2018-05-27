@@ -11,18 +11,52 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ###  Web Services
   - POST service for SQL querying data
-    - [ ] input: sql / app info / config (includes row/column-based json, fetch size, cookie)
+    - input:
+       - [X] sql
+       - [ ] app info - host / system name
+       - [ ] config flag - row/column-based json
+       - [X] config flag - fetch size => null: default value (10) / 0: fetch all / positive integer: fetch
+       - [ ] config flag - cookie
+       - [ ] return status code for wrong inputs (keep ORA errors)
     - output:
-       - [ ] flag not to fetch all: A request with cookie, remote address and remote port
-       - [ ] flag to fetch all: sql data, data types
+       - flag not to fetch all
+           - [ ] Need to check the mechanism - https://docs.oracle.com/cd/E23943_01/web.1111/e13712/sessions.htm#WBAPP309 => 慶全讀完，下禮拜稍微講一下內容，再繼續討論
+       - flag to fetch all: sql data, data types
+           - [X] sql data
+           - [X] data types
   - POST service for SQL querying data
     - [ ] input: session-id, fetch size (max: 10,000)
     - [ ] output: sql data, data types
   - POST service for transaction SQL
-    - [ ] input: sql / app info
-    - [ ] output: successful or not
+    - input:
+        - [ ] sql
+        - [ ] app info
+        - [ ] return status code for wrong inputs (keep ORA errors)
+    - output:
+        - [ ] successful or not
+        - [ ] how many rows are affected
 
 ###  Web View
+  - Flask Documents
+      - [ ] {6/17} (Jamal) Flask - LDAP Login => redirect main page
+      - [ ] {6/17} (PAPA) Flask - Render main page
+      - [ ] (PAPA) Flask - SQL Editor - Syntax HL
+      - [ ] (Ciel) Flask - SQL Editor - auto complete (table/columns)
+      - [ ] (WZ) Flask - SQL Editor - auto formatter
+      - [ ] (PAPA) Flask - SQL Editor - theme switch (bright/dark)
+      - [ ] (Jamal) Flask - SQL Editor - snippet (sf => select * from)，可以customized
+      - [ ] (PAPA) Flask - Show JSON table => 找一個JavaScript庫直接做呈現 => 找不到才手刻
+      - [ ] (PAPA) Flask - edit JSON table => update / insert / delete / commit button
+      - [ ] {6/17} (Ciel) Flask - Functionalities of right-button (可能要找JavaScript)
+      - [ ] (WZ) Flask - save temporary SQL (can be recovered)
+      - [ ] Flask - Multiple Windows (in same tab) => 要確定記憶體，有沒有定期清除 => 待決
+  - Service Documents
+      - [ ] {6/17} (Jamal) service - check execution plan
+      - [ ] {6/17} (Ciel) service - read procedure / function
+      - [ ] {6/17} (PAPA) service - read table schema and show => basic info / columns info
+      - [ ] {6/17} (PAPA) service - read table schema and show => key info / index info
+      - [ ] {6/17} (Jamal) service - read table schema and show => checks info / table privilege
+      - [ ] {6/17} (Ciel) service - read table schema and show => partition info
   - [ ] 支援LDAP登入，並以username控制可以查詢的DB (如目前的JASDA)
   - SQL編輯器，支援function, table, column提示
      - [ ] syntax highlight
@@ -33,8 +67,8 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
      - [ ] column auto-complete
      - [ ] 查詢execusion plan
      - [ ] auto formatter
-     - [ ] windows list of sql editor
-     - [ ] save sql scripts
+     - [ ] windows list of SQL editor
+     - [ ] save SQL scripts
   - procedure, function編輯器，並支援儲存
      - [ ] view procedure/function
      - [ ] edit procedure/function
@@ -79,6 +113,7 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
   - [ ] 自動砍table lock (可以在Admin頁面設定時間)
 
 ###  元件HA機制
+  - [ ] Introduction to K8S (架構/怎麼建立服務)
   - [ ] Middleware Group
   - [ ] web server
   - [ ] Configuration of connection setting and group setting in Oracle
@@ -91,7 +126,7 @@ Web Oracle Tool (下面簡稱WOT)目標為以Oracle Database為核心，構建�
 
 ### 測試Oracle部署
   - [X] 安裝: [My Blogger](http://chingchuan-chen.github.io/posts/201607/2016-07-24-deployment-of-oracle-database.html)
-  - [ ] 倒入測試資料 [Yelp Open Datasets](https://www.yelp.com/dataset)，測試資料長相如下圖
+  - [X] 倒入測試資料 [Yelp Open Datasets](https://www.yelp.com/dataset)，測試資料長相如下圖
 ![](https://s3-media3.fl.yelpcdn.com/assets/srv0/engineering_pages/f4456a01e74a/assets/img/dataset/yelp_dataset_schema.png)
 
 ## References
